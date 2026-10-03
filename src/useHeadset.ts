@@ -315,8 +315,8 @@ export function useHeadset() {
     [setCallMode],
   );
   useEffect(() => {
-    sys.publishState({ ...s, inCall, callMode, updatedAt: new Date().toISOString() });
-  }, [s, inCall, callMode]);
+    sys.publishState({ ...s, hoursRemaining, inCall, callMode, updatedAt: new Date().toISOString() });
+  }, [s, hoursRemaining, inCall, callMode]);
 
   const forget = useCallback((mac: string) => {
     bmap.forgetDevice(mac);

@@ -14,6 +14,7 @@ import { C } from './src/theme';
 import { useKnobHovering } from './src/knobHover';
 import { CommandBar } from './src/CommandBar';
 import { runCommand } from './src/commands';
+import { PairingGlow } from './src/PairingGlow';
 
 const W = 360;
 const H = 560;
@@ -25,6 +26,7 @@ const TAB_W = (W - PAD * 2) / TABS.length;
 export default function App() {
   const h = useHeadset();
   const [tab, setTab] = useState<Tab>('sound');
+  const [pairing, setPairing] = useState(false);
   const level = h.anc?.level ?? 0;
 
   // Indicator slides under the active tab; content slides in from the side we're moving toward.
@@ -92,9 +94,11 @@ export default function App() {
 
       <Animated.View style={[styles.flex, contentStyle]}>
         {tab === 'sound' && <Sound h={h} level={level} />}
-        {tab === 'devices' && <Devices h={h} />}
+        {tab === 'devices' && <Devices h={h} pairing={pairing} setPairing={setPairing} />}
         {tab === 'settings' && <Settings h={h} />}
       </Animated.View>
+
+      <PairingGlow active={pairing} width={W} height={H} radius={12} />
     </View>
   );
 }
@@ -158,9 +162,8 @@ function Sound({ h, level }: { h: Hs; level: number }) {
   );
 }
 
-function Devices({ h }: { h: Hs }) {
+function Devices({ h, pairing, setPairing }: { h: Hs; pairing: boolean; setPairing: (v: boolean) => void }) {
   const [confirm, setConfirm] = useState<string | null>(null);
-  const [pairing, setPairing] = useState(false);
   const togglePairing = () => {
     if (pairing) h.exitPairingMode();
     else h.enterPairingMode();
