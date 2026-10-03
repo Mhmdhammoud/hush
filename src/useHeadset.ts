@@ -337,5 +337,5 @@ export function useHeadset() {
   return { ...s, meetingPrep, setMeetingPrep, hoursRemaining, suggestion, appRules, acceptRule, removeRule, dismissRule, predicted, setAncManual, inCall, callMode, setCallMode, pullOnUnlock, setPullOnUnlock, setAnc: bmap.setAnc, setEq: bmap.setEq, setSelfVoice: bmap.setSelfVoice, switchTo, forget,
     setName: bmap.setName, setAutoOff: bmap.setAutoOff, setVoicePrompts: bmap.setVoicePrompts,
     setMultipoint: bmap.setMultipoint, setShortcut: bmap.setShortcut, setConversation: bmap.setConversation,
-    setAncPresets: bmap.setAncPresets, enterPairingMode: bmap.enterPairingMode };
+    setAncPresets: bmap.setAncPresets, enterPairingMode: bmap.enterPairingMode, exitPairingMode: bmap.exitPairingMode };
 }

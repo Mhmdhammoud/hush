@@ -163,3 +163,4 @@ export const setAncPresets = (index: number, levels: number[]) => {
 /** Pairing list management (block 04, START). */
 export const forgetDevice = (mac: string) => send(0x04, 0x03, Op.START, macBytes(mac));
 export const enterPairingMode = () => send(0x04, 0x08, Op.START, [0x01]);
+export const exitPairingMode = () => send(0x04, 0x08, Op.START, [0x00]);

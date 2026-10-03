@@ -42,7 +42,7 @@ Operators: 1 GET, 2 SETGET, 3 STATUS (reply), 4 ERROR, 5 START, 6 RESULT, 7 PROC
 | Connect device | — | `04 01 05 07 [00, mac]` |
 | Disconnect device | — | `04 02 05 06 [mac]` |
 | Forget device | — | `04 03 05 06 [mac]` |
-| Pairing mode | `04 08 01 00` | `04 08 05 01 01` |
+| Pairing mode | `04 08 01 00` → `[active, …]` | enter `04 08 05 01 01`, leave `04 08 05 01 00` (may drop a connection) |
 | Name | `01 02 01 00` → `[00, utf8…]` | `01 02 02 n [utf8…]` |
 | Voice prompts | `01 03 01 00` → `[(on<<5)\|lang, mask×4]` | `01 03 02 01 [(on<<5)\|lang]` |
 | Auto-off | `01 04 01 00` → `[minutes]` (0 = never) | `01 04 02 01 [minutes]` |

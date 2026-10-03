@@ -160,6 +160,12 @@ function Sound({ h, level }: { h: Hs; level: number }) {
 
 function Devices({ h }: { h: Hs }) {
   const [confirm, setConfirm] = useState<string | null>(null);
+  const [pairing, setPairing] = useState(false);
+  const togglePairing = () => {
+    if (pairing) h.exitPairingMode();
+    else h.enterPairingMode();
+    setPairing(!pairing);
+  };
   const devices = [...h.devices].sort((a, b) => Number(b.connected) - Number(a.connected));
   return (
     <ScrollView style={styles.flex} contentContainerStyle={styles.body}>
@@ -193,9 +199,15 @@ function Devices({ h }: { h: Hs }) {
       <Text style={[styles.meta, styles.section]}>
         Click a device to switch to it. Hush drops the other connection first. The headphones remember up to 8.
       </Text>
-      <Pressable onPress={h.enterPairingMode} style={styles.button}>
-        <Text style={styles.buttonText}>Pair a new device</Text>
+      <Pressable onPress={togglePairing} style={styles.button}>
+        <Text style={styles.buttonText}>{pairing ? 'Stop pairing' : 'Pair a new device'}</Text>
       </Pressable>
+      {pairing && (
+        <Text style={[styles.meta, styles.hotkey]}>
+          The headphones are discoverable now; pick them in the new device's Bluetooth settings. Pairing mode may
+          drop one current connection.
+        </Text>
+      )}
     </ScrollView>
   );
 }
