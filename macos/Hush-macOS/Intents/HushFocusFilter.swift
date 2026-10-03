@@ -25,6 +25,10 @@ struct HushFocusFilter: SetFocusFilterIntent {
   @Parameter(title: "Hear yourself on calls") var selfVoice: FocusSelfVoice?
   @Parameter(title: "EQ") var eq: EqPreset?
 
+  static var parameterSummary: some ParameterSummary {
+    Summary("Noise cancelling \(\.$anc), hear yourself \(\.$selfVoice), EQ \(\.$eq)")
+  }
+
   var displayRepresentation: DisplayRepresentation {
     var parts: [String] = []
     if let anc { parts.append("noise cancelling \(Int(anc.rounded()))") }
