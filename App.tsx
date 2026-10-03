@@ -261,7 +261,7 @@ function Settings({ h }: { h: Hs }) {
       />
       <Toggle label="Multipoint" hint="Stay connected to two devices at once" value={h.multipoint} onChange={h.setMultipoint} />
 
-      <Text style={[styles.label, styles.section]}>NOISE CANCELLING BUTTON CYCLES</Text>
+      <Text style={[styles.label, styles.section]}>NOISE CANCELLING BUTTON LEVELS</Text>
       <View style={styles.eqRow}>
         {[0, 1, 2].map(i => (
           <Knob
@@ -276,9 +276,9 @@ function Settings({ h }: { h: Hs }) {
         ))}
       </View>
 
-      <Text style={[styles.label, styles.section]}>PER-APP NOISE CANCELLING</Text>
+      <Text style={[styles.label, styles.section]}>REMEMBERED APPS</Text>
       {Object.keys(h.appRules).length === 0 ? (
-        <Text style={styles.meta}>Hush suggests rules once it notices a habit, e.g. always 10 in Xcode.</Text>
+        <Text style={styles.meta}>When you keep using the same level in an app, Hush offers to remember it.</Text>
       ) : (
         Object.entries(h.appRules).map(([app, rule]) => (
           <View key={app} style={styles.ruleRow}>
@@ -299,31 +299,31 @@ function Settings({ h }: { h: Hs }) {
       />
       <Toggle
         label="Call mode"
-        hint={h.inCall ? 'On a call now' : 'Max noise cancelling + self voice while the mic is in use'}
+        hint={h.inCall ? 'You’re on a call now' : 'During calls: full noise cancelling, and you hear your own voice'}
         value={h.callMode}
         onChange={h.setCallMode}
       />
       <Toggle
         label="Meeting prep"
-        hint="Before calendar meetings: bring headphones here, warn if the battery won't last"
+        hint="Before meetings: connects your headphones here and warns if the battery is low"
         value={h.meetingPrep}
         onChange={h.setMeetingPrep}
       />
       <Toggle
         label="Bring headphones here on unlock"
-        hint="Connects them to this Mac when you unlock it"
+        hint="Unlocking this Mac moves your headphones to it"
         value={h.pullOnUnlock}
         onChange={h.setPullOnUnlock}
       />
       <Pressable
         onPress={() => Linking.openURL('x-apple.systempreferences:com.apple.Focus-Settings.extension')}
         style={styles.button}>
-        <Text style={styles.buttonText}>Set up Focus profile…</Text>
+        <Text style={styles.buttonText}>Change headphones with Focus…</Text>
       </Pressable>
       <Text style={[styles.meta, styles.hotkey]}>
-        In a Focus, add the Hush profile under Focus filters. macOS only lets you do this yourself.
+        Open a Focus such as Work, click Add Filter, and pick Hush to choose its noise cancelling.
       </Text>
-      <Text style={[styles.meta, styles.hotkey]}>⌥⌘N cycles noise cancelling 0 → 5 → 10</Text>
+      <Text style={[styles.meta, styles.hotkey]}>Shortcut: ⌥⌘N switches noise cancelling between 0, 5 and 10</Text>
 
       <Text style={[styles.label, styles.section]}>ABOUT</Text>
       <Text style={styles.meta}>Firmware {h.firmware ?? '—'}</Text>
