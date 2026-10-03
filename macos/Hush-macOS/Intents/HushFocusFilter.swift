@@ -21,7 +21,7 @@ struct HushFocusFilter: SetFocusFilterIntent {
   static let title: LocalizedStringResource = "Hush profile"
   static let description = IntentDescription("Sets noise cancelling, how much you hear yourself on calls, and EQ while this Focus is on.")
 
-  @Parameter(title: "Noise cancelling", controlStyle: .stepper, inclusiveRange: (0, 10)) var anc: Double?
+  @Parameter(title: "Noise cancelling", controlStyle: .slider, inclusiveRange: (0, 10)) var anc: Double?
   @Parameter(title: "Hear yourself on calls") var selfVoice: FocusSelfVoice?
   @Parameter(title: "EQ") var eq: EqPreset?
 
