@@ -13,13 +13,13 @@ struct HushFocusFilter: SetFocusFilterIntent {
   static let title: LocalizedStringResource = "Hush profile"
   static let description = IntentDescription("Sets noise cancelling, self voice and EQ while this Focus is on.")
 
-  @Parameter(title: "Noise cancelling", inclusiveRange: (0, 10)) var anc: Int?
+  @Parameter(title: "Noise cancelling", controlStyle: .slider, inclusiveRange: (0, 10)) var anc: Double?
   @Parameter(title: "Self voice") var selfVoice: SelfVoiceMode?
   @Parameter(title: "EQ") var eq: EqPreset?
 
   var displayRepresentation: DisplayRepresentation {
     var parts: [String] = []
-    if let anc { parts.append("NC \(anc)") }
+    if let anc { parts.append("noise cancelling \(Int(anc.rounded()))") }
     if let selfVoice { parts.append("self voice \(selfVoice.rawValue)") }
     if eq == .flat { parts.append("flat EQ") }
     return DisplayRepresentation(title: "Hush profile", subtitle: parts.isEmpty ? nil : "\(parts.joined(separator: ", "))")
@@ -51,7 +51,7 @@ struct HushFocusFilter: SetFocusFilterIntent {
       let snap = Snapshot(anc: level, selfVoice: s.selfVoice ?? "off", eq: s.eq)
       defaults.set(try JSONEncoder().encode(snap), forKey: Self.snapshotKey)
     }
-    if let anc { Hush.send("anc/\(anc)") }
+    if let anc { Hush.send("anc/\(Int(anc.rounded()))") }
     if let selfVoice { Hush.send("selfvoice/\(selfVoice.rawValue)") }
     if eq == .flat { Hush.send("eq/flat") }
     return .result()
