@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Linking, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import * as bmap from './src/bmap';
 import { useHeadset } from './src/useHeadset';
@@ -312,6 +312,14 @@ function Settings({ h }: { h: Hs }) {
         value={h.pullOnUnlock}
         onChange={h.setPullOnUnlock}
       />
+      <Pressable
+        onPress={() => Linking.openURL('x-apple.systempreferences:com.apple.Focus-Settings.extension')}
+        style={styles.button}>
+        <Text style={styles.buttonText}>Set up Focus profile…</Text>
+      </Pressable>
+      <Text style={[styles.meta, styles.hotkey]}>
+        In a Focus, add the Hush profile under Focus filters. macOS only lets you do this yourself.
+      </Text>
       <Text style={[styles.meta, styles.hotkey]}>⌥⌘N cycles noise cancelling 0 → 5 → 10</Text>
 
       <Text style={[styles.label, styles.section]}>ABOUT</Text>

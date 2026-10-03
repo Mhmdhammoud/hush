@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-// Hush bridge: lets the iPad control surface (pad/) drive the headphones and a few Mac actions over the LAN.
+// Hush bridge: lets the iPad control surface (ipad/) drive the headphones and a few Mac actions over the LAN.
 // Headphone commands go through bin/hush, same as the MCP server, so the Hush app still does the Bluetooth work.
 //   node bridge/server.js          serve on :7733
-//   node bridge/server.js --pair   write pad/src/config.json (host, port, token) for the iPad build
+//   node bridge/server.js --pair   write ipad/src/config.json (host, port, token) for the iPad build
 // Every request needs `Authorization: Bearer <token>`; the token lives in ~/Library/Application Support/Hush/pad-token.
 import { execFile } from 'node:child_process';
 import { randomBytes, timingSafeEqual } from 'node:crypto';
@@ -130,7 +130,7 @@ export function serve({ port = PORT, secret = token() } = {}) {
 
 async function pair() {
   const host = `${(await run('scutil', ['--get', 'LocalHostName'])).stdout.trim()}.local`;
-  const out = here('../pad/src/config.json');
+  const out = here('../ipad/src/config.json');
   writeFileSync(out, JSON.stringify({ host, port: PORT, token: token() }, null, 2) + '\n');
   console.log(`wrote ${out} → http://${host}:${PORT}`);
 }

@@ -2,7 +2,7 @@
   "name": "hush-bridge",
   "version": "0.1.0",
   "private": true,
-  "description": "LAN bridge for the Hush iPad control surface (pad/), stdlib only",
+  "description": "LAN bridge for the Hush iPad control surface (ipad/), stdlib only",
   "type": "module",
   "scripts": {
     "start": "node server.js",

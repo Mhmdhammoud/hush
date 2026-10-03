@@ -1,5 +1,5 @@
 /**
- * Hush Pad: an iPad control surface for Hush. Talks to ../bridge on the Mac, which drives
+ * Hush for iPad: a touch control surface for Hush. Talks to ../bridge on the Mac, which drives
  * the headphones through bin/hush and runs a few allow-listed Mac actions.
  */
 import React from 'react';

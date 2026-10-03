@@ -1,7 +1,9 @@
 export type Sample = { t: number; pct: number }; // t = epoch ms
 
-const WINDOW_MS = 4 * 3600_000;
-const MIN_DROP = 3; // % — below this the rate is noise
+const WINDOW_MS = 6 * 3600_000;
+// The NC700 reports battery in 10% steps, so one step says little about the rate.
+const MIN_DROP = 20; // %
+const MIN_SPAN_MS = 3600_000;
 
 /** Append a reading; a jump up means it was charged, so start over. */
 export function addSample(samples: Sample[], s: Sample): Sample[] {
@@ -17,7 +19,7 @@ export function hoursLeft(samples: Sample[]): number | null {
   const a = samples[0];
   const b = samples[samples.length - 1];
   const drop = a.pct - b.pct;
-  if (drop < MIN_DROP) return null;
+  if (drop < MIN_DROP || b.t - a.t < MIN_SPAN_MS) return null;
   const perHour = drop / ((b.t - a.t) / 3600_000);
   return b.pct / perHour;
 }
