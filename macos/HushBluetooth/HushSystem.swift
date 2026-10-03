@@ -16,7 +16,7 @@ class HushSystem: RCTEventEmitter {
 
   override static func requiresMainQueueSetup() -> Bool { true }
   override var methodQueue: DispatchQueue { .main }
-  override func supportedEvents() -> [String] { ["hotkey", "mic", "wheel", "command", "unlock", "frontApp"] }
+  override func supportedEvents() -> [String] { ["hotkey", "mic", "wheel", "command", "unlock", "frontApp", "visible"] }
   private var pendingCommands: [String] = []
   override func startObserving() {
     hasListeners = true
@@ -32,6 +32,12 @@ class HushSystem: RCTEventEmitter {
     DispatchQueue.main.async { self.watchMic() }
     DistributedNotificationCenter.default().addObserver(forName: Notification.Name("com.apple.screenIsUnlocked"), object: nil, queue: .main) {
       [weak self] _ in if let self, self.hasListeners { self.sendEvent(withName: "unlock", body: nil) }
+    }
+    // The popover's window is key while it's open: JS pauses its animations when it isn't.
+    for (name, open) in [(NSWindow.didBecomeKeyNotification, true), (NSWindow.didResignKeyNotification, false)] {
+      NotificationCenter.default.addObserver(forName: name, object: nil, queue: .main) {
+        [weak self] _ in if let self, self.hasListeners { self.sendEvent(withName: "visible", body: open) }
+      }
     }
     // Frontmost app (ignoring Hush itself) for per-app noise-cancelling rules.
     NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.didActivateApplicationNotification, object: nil, queue: .main) {

@@ -7,6 +7,7 @@ import {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+import * as sys from './system';
 
 // Brushed-metal noise field. `anc` 0 = turbulent silver grain, 1 = still graphite.
 // Time is fed as two angles (wrapped at 2π) that orbit through noise space, so
@@ -135,14 +136,16 @@ export function NoiseField({
 
   // Integrate phase on the UI thread: speed follows `calm`, so changing ANC
   // changes the tempo without any jump in the field.
-  useFrameCallback(({ timeSincePreviousFrame }) => {
+  const frame = useFrameCallback(({ timeSincePreviousFrame }) => {
     'worklet';
     const dt = Math.min(timeSincePreviousFrame ?? 16, 64) / 1000;
     const chaos = 1 - calm.value;
     a1.value = (a1.value + dt * (0.035 + 0.12 * chaos * chaos)) % TAU;
     a2.value = (a2.value + dt * (0.03 + 0.35 * chaos)) % TAU;
     seed.value = (seed.value + 1) % 64;
-  });
+  }, false);
+  // The popover lives in the menu bar all day: only animate while it's open.
+  useEffect(() => sys.onVisible(open => frame.setActive(open)), [frame]);
 
   const uniforms = useDerivedValue(() => ({
     res: [width, height],

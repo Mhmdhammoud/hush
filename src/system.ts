@@ -46,6 +46,12 @@ export function onUnlock(cb: () => void) {
   return () => sub.remove();
 }
 
+/** Fires true when the popover opens and false when it closes. */
+export function onVisible(cb: (open: boolean) => void) {
+  const sub = emitter.addListener('visible', cb);
+  return () => sub.remove();
+}
+
 export type FrontApp = { bundleId: string; name: string };
 export function onFrontApp(cb: (app: FrontApp) => void) {
   const sub = emitter.addListener('frontApp', cb);
