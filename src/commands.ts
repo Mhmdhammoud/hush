@@ -1,4 +1,5 @@
 import * as bmap from './bmap';
+import * as sys from './system';
 import type { Headset } from './useHeadset';
 
 const ANC_CYCLE = [0, 5, 10];
@@ -11,6 +12,7 @@ const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v
  * hush://switch/<device name substring>
  * hush://callmode/on|off
  * hush://conversation/on|off
+ * hush://login/on|off            (launch at login)
  * Returns an error string for bad input, null on success.
  */
 export function runCommand(url: string, h: Headset, setCallMode: (on: boolean) => void): string | null {
@@ -51,6 +53,9 @@ export function runCommand(url: string, h: Headset, setCallMode: (on: boolean) =
       return null;
     case 'conversation':
       bmap.setConversation(a === 'on');
+      return null;
+    case 'login':
+      sys.setLaunchAtLogin(a === 'on').catch(() => {});
       return null;
     default:
       return `unknown command: ${cmd}`;

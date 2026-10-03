@@ -24,6 +24,7 @@ switch (cmd) {
   case 'eq': if (a === 'flat') s.eq = { bass: 0, mid: 0, treble: 0 }; else s.eq[a] = Number(b); break;
   case 'selfvoice': s.selfVoice = a; break;
   case 'callmode': s.callMode = a === 'on'; break;
+  case 'conversation': s.conversation = a === 'on'; break;
   case 'switch': {
     const d = s.devices.find(d => d.name === a);
     if (d && d.name !== 'Broken Phone') {
