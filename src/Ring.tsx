@@ -21,7 +21,7 @@ export function Ring({ value, size, label }: { value: number | null; size: numbe
         <Path path={arc} style="stroke" strokeWidth={2} strokeCap="round" color={low ? '#e8a0a0' : '#d9dde3'} />
       </Canvas>
       <View style={[StyleSheet.absoluteFill, styles.center]}>
-        <Text style={styles.text}>{value ?? '–'}<Text style={styles.pct}>%</Text></Text>
+        <Text style={styles.text}>{value ?? '–'}{value != null && <Text style={styles.pct}>%</Text>}</Text>
       </View>
     </View>
   );

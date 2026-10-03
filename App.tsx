@@ -62,8 +62,10 @@ export default function App() {
             {h.name ?? 'Hush'}
           </Text>
           <Text style={styles.meta}>
-            {h.status !== 'connected'
-              ? h.error ?? h.status
+            {h.status === 'connecting'
+              ? 'Looking for your headphones…'
+              : h.status !== 'connected'
+              ? 'Headphones are off or out of range'
               : h.hoursRemaining != null
                 ? `Bose NC 700 · ${formatHours(h.hoursRemaining)}`
                 : 'Bose NC 700'}
@@ -106,6 +108,7 @@ export default function App() {
 type Hs = ReturnType<typeof useHeadset>;
 
 function Sound({ h, level }: { h: Hs; level: number }) {
+  const live = h.status === 'connected';
   return (
     <View style={[styles.body, styles.center]}>
       {h.suggestion && (
@@ -125,8 +128,10 @@ function Sound({ h, level }: { h: Hs; level: number }) {
           </View>
         </View>
       )}
-      <Knob value={level} min={0} max={bmap.ANC_STEPS - 1} size={168} onChange={h.setAncManual} />
-      <Text style={styles.label}>{h.conversation ? 'CONVERSATION MODE' : 'NOISE CANCELLING'}</Text>
+      {/* Headphones off: the controls stay visible but dimmed and inert, showing – instead of a misleading 0. */}
+      <View style={[styles.center, !live && styles.inert]} pointerEvents={live ? 'auto' : 'none'}>
+      <Knob value={level} min={0} max={bmap.ANC_STEPS - 1} size={168} onChange={h.setAncManual} format={live ? undefined : () => '–'} />
+      <Text style={styles.label}>{!live ? 'TURN YOUR HEADPHONES ON TO ADJUST' : h.conversation ? 'CONVERSATION MODE' : 'NOISE CANCELLING'}</Text>
 
       <View style={styles.eqRow}>
         {(['bass', 'mid', 'treble'] as bmap.EqBand[]).map(b => (
@@ -138,7 +143,7 @@ function Sound({ h, level }: { h: Hs; level: number }) {
             size={72}
             bipolar
             label={b.toUpperCase()}
-            format={v => (v > 0 ? `+${v}` : String(v))}
+            format={v => (!live ? '–' : v > 0 ? `+${v}` : String(v))}
             onChange={v => h.setEq(b, v)}
           />
         ))}
@@ -158,6 +163,7 @@ function Sound({ h, level }: { h: Hs; level: number }) {
           onChange={h.setConversation}
         />
       </View>
+      </View>
     </View>
   );
 }
@@ -170,8 +176,15 @@ function Devices({ h, pairing, setPairing }: { h: Hs; pairing: boolean; setPairi
     setPairing(!pairing);
   };
   const devices = [...h.devices].sort((a, b) => Number(b.connected) - Number(a.connected));
+  const live = h.status === 'connected';
   return (
     <ScrollView style={styles.flex} contentContainerStyle={styles.body}>
+      {!live && (
+        <Text style={[styles.meta, styles.offlineHint]}>
+          {devices.length ? 'Turn your headphones on to switch or pair devices.' : 'Your devices show up here when the headphones are on.'}
+        </Text>
+      )}
+      <View style={!live && styles.inert} pointerEvents={live ? 'auto' : 'none'}>
       {h.predicted && (
         <Pressable onPress={() => h.switchTo(h.predicted!.mac)} style={[styles.card, styles.cardRow]}>
           <Text style={[styles.cardText, styles.flex]}>You usually use {h.predicted.name} around now</Text>
@@ -211,6 +224,7 @@ function Devices({ h, pairing, setPairing }: { h: Hs; pairing: boolean; setPairi
           drop one current connection.
         </Text>
       )}
+      </View>
     </ScrollView>
   );
 }
@@ -237,6 +251,8 @@ function Settings({ h }: { h: Hs }) {
   return (
     <ScrollView style={styles.flex} contentContainerStyle={styles.body} scrollEnabled={!overKnob}>
       <Text style={styles.label}>HEADPHONES</Text>
+      {h.status !== 'connected' && <Text style={[styles.meta, styles.offlineHint]}>Turn your headphones on to change these.</Text>}
+      <View style={h.status !== 'connected' && styles.inert} pointerEvents={h.status === 'connected' ? 'auto' : 'none'}>
       <View style={styles.row}>
         <Text style={styles.rowLabel}>Name</Text>
         <TextInput value={name} onChangeText={setName} onSubmitEditing={saveName} onBlur={saveName} style={styles.input} />
@@ -276,6 +292,7 @@ function Settings({ h }: { h: Hs }) {
         ))}
       </View>
 
+      </View>
       <Text style={[styles.label, styles.section]}>REMEMBERED APPS</Text>
       {Object.keys(h.appRules).length === 0 ? (
         <Text style={styles.meta}>When you keep using the same level in an app, Hush offers to remember it.</Text>
@@ -335,6 +352,8 @@ function Settings({ h }: { h: Hs }) {
 }
 
 const styles = StyleSheet.create({
+  inert: { opacity: 0.4, alignSelf: 'stretch' },
+  offlineHint: { marginBottom: 14 },
   root: { width: W, height: H, backgroundColor: C.bg },
   scrim: { backgroundColor: 'rgba(6,7,9,0.5)' },
   flex: { flex: 1 },
