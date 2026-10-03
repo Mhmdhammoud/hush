@@ -1,0 +1,16 @@
+{
+  "name": "hush-mcp",
+  "version": "0.1.0",
+  "private": true,
+  "description": "MCP server exposing Hush (Bose NC700) controls to AI agents via bin/hush",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node smoke.test.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.0",
+    "zod": "^4.6.5"
+  }
+}

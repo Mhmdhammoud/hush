@@ -1,0 +1,50 @@
+#!/bin/zsh
+# hush: control Bose NC700 headphones through the Hush menu-bar app.
+#   hush                       status (add --json for raw)
+#   hush anc <0-10|up|down|cycle>
+#   hush eq <bass|mid|treble> <-10..10> | hush eq flat
+#   hush selfvoice <off|low|medium|high>
+#   hush switch <device name>  e.g. hush switch iphone
+#   hush callmode <on|off>
+set -e
+# Sandboxed builds write inside the container; ad-hoc/unsandboxed builds write to ~/Library.
+STATE="$HOME/Library/Application Support/Hush/state.json"
+SANDBOXED="$HOME/Library/Containers/app.hush.macos/Data/Library/Application Support/Hush/state.json"
+[[ -f "$SANDBOXED" && "$SANDBOXED" -nt "$STATE" ]] && STATE="$SANDBOXED"
+
+ensure_running() {
+  pgrep -xq Hush && return
+  open -g -b app.hush.macos
+  for i in {1..20}; do [[ -f "$STATE" ]] && pgrep -xq Hush && sleep 2 && return; sleep 0.5; done
+}
+
+# Deliver to the running instance explicitly; a bare `open hush://…` lets LaunchServices pick any
+# registered copy of the app (e.g. another build folder) and launch a second Hush.
+send() {
+  ensure_running
+  local exe=$(ps -o comm= -p $(pgrep -x Hush | head -1))
+  open -g -a "${exe%/Contents/MacOS/*}" "hush://${(j:/:)@}"
+}
+
+case "${1:-status}" in
+  status)
+    ensure_running
+    [[ -f "$STATE" ]] || { echo "no state yet"; exit 1; }
+    if [[ "$2" == "--json" ]]; then cat "$STATE"; exit; fi
+    /usr/bin/python3 - "$STATE" <<'PY'
+import json, sys
+s = json.load(open(sys.argv[1]))
+if s["status"] != "connected":
+    print(f"Hush: {s['status']}" + (f" ({s['error']})" if s.get("error") else "")); sys.exit()
+anc, eq = s.get("anc") or {}, s.get("eq") or {}
+print(f"{s['name']}  ·  battery {s.get('battery')}%  ·  firmware {s.get('firmware')}")
+print(f"noise cancelling {anc.get('level')}/10  ·  self voice {s.get('selfVoice')}  ·  call mode {'on' if s.get('callMode') else 'off'}{' (in call)' if s.get('inCall') else ''}")
+print(f"eq  bass {eq.get('bass')}  mid {eq.get('mid')}  treble {eq.get('treble')}")
+for d in sorted(s["devices"], key=lambda d: not d["connected"]):
+    print(f"  {'●' if d['connected'] else '○'} {d['name']}{'  (this Mac)' if d['isHost'] else ''}")
+PY
+    ;;
+  anc|eq|selfvoice|switch|callmode) send "$@" ;;
+  -h|--help|help) sed -n '2,8p' "$0" | sed 's/^# \{0,1\}//' ;;
+  *) echo "unknown command: $1 (try: hush help)"; exit 2 ;;
+esac
