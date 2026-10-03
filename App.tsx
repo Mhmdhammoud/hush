@@ -144,7 +144,7 @@ function Sound({ h, level }: { h: Hs; level: number }) {
         ))}
       </View>
 
-      <Text style={[styles.label, styles.section]}>SELF VOICE</Text>
+      <Text style={[styles.label, styles.section]}>HEAR YOURSELF ON CALLS</Text>
       <Segmented
         options={['off', 'low', 'medium', 'high'] as bmap.SelfVoice[]}
         value={h.selfVoice}
@@ -299,7 +299,7 @@ function Settings({ h }: { h: Hs }) {
       />
       <Toggle
         label="Call mode"
-        hint={h.inCall ? 'You’re on a call now' : 'During calls: full noise cancelling, and you hear your own voice'}
+        hint={h.inCall ? 'You’re on a call now' : 'During calls: full noise cancelling, and you hear yourself'}
         value={h.callMode}
         onChange={h.setCallMode}
       />

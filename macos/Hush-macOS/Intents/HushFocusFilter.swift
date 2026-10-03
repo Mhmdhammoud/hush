@@ -19,10 +19,10 @@ enum FocusSelfVoice: String, AppEnum {
 /// All parameters are optional, so the system calling perform() with defaults (= Focus ended) is all-nil.
 struct HushFocusFilter: SetFocusFilterIntent {
   static let title: LocalizedStringResource = "Hush profile"
-  static let description = IntentDescription("Sets noise cancelling, self voice and EQ while this Focus is on.")
+  static let description = IntentDescription("Sets noise cancelling, how much you hear yourself on calls, and EQ while this Focus is on.")
 
   @Parameter(title: "Noise cancelling", controlStyle: .stepper, inclusiveRange: (0, 10)) var anc: Double?
-  @Parameter(title: "Self voice") var selfVoice: FocusSelfVoice?
+  @Parameter(title: "Hear yourself on calls") var selfVoice: FocusSelfVoice?
   @Parameter(title: "EQ") var eq: EqPreset?
 
   var displayRepresentation: DisplayRepresentation {
