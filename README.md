@@ -145,9 +145,11 @@ Shortcuts app, Spotlight and Siri:
   (returns the percentage, says time remaining).
 - Siri phrases include the app name, e.g. "Switch Hush to iPhone", "What's my Hush battery".
 - **Focus filter**: System Settings → Focus → (a Focus) → Focus filters → Hush profile.
-  Pick a noise cancelling level, self voice mode and optionally a flat EQ. When the
+  Pick a noise cancelling level, how much you hear yourself on calls and optionally a flat EQ. When the
   Focus turns on Hush snapshots the current settings (UserDefaults `hush.focusSnapshot`)
   and applies the profile; when it turns off the snapshot is restored.
+  The build must be signed with a development team (Xcode → Signing & Capabilities): with
+  ad-hoc signing System Settings shows an empty filter form and can't save it.
 
 Intents run inside the menu-bar app and go through the same `hush://` command path as
 the URL scheme and CLI. If Hush isn't running macOS launches it; intents wait up to
