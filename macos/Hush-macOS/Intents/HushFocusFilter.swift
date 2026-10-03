@@ -7,20 +7,28 @@ enum EqPreset: String, AppEnum {
   static let caseDisplayRepresentations: [EqPreset: DisplayRepresentation] = [.keep: "Keep current", .flat: "Flat"]
 }
 
+enum FocusSelfVoice: String, AppEnum {
+  case keep, off, low, medium, high
+  static let typeDisplayRepresentation: TypeDisplayRepresentation = "Self Voice"
+  static let caseDisplayRepresentations: [FocusSelfVoice: DisplayRepresentation] = [
+    .keep: "Keep current", .off: "Off", .low: "Low", .medium: "Medium", .high: "High",
+  ]
+}
+
 /// Focus filter: applies a Hush profile while a Focus is on, restores the previous settings when it ends.
 /// All parameters are optional, so the system calling perform() with defaults (= Focus ended) is all-nil.
 struct HushFocusFilter: SetFocusFilterIntent {
   static let title: LocalizedStringResource = "Hush profile"
   static let description = IntentDescription("Sets noise cancelling, self voice and EQ while this Focus is on.")
 
-  @Parameter(title: "Noise cancelling", controlStyle: .slider, inclusiveRange: (0, 10)) var anc: Double?
-  @Parameter(title: "Self voice") var selfVoice: SelfVoiceMode?
+  @Parameter(title: "Noise cancelling", controlStyle: .stepper, inclusiveRange: (0, 10)) var anc: Double?
+  @Parameter(title: "Self voice") var selfVoice: FocusSelfVoice?
   @Parameter(title: "EQ") var eq: EqPreset?
 
   var displayRepresentation: DisplayRepresentation {
     var parts: [String] = []
     if let anc { parts.append("noise cancelling \(Int(anc.rounded()))") }
-    if let selfVoice { parts.append("self voice \(selfVoice.rawValue)") }
+    if let selfVoice, selfVoice != .keep { parts.append("self voice \(selfVoice.rawValue)") }
     if eq == .flat { parts.append("flat EQ") }
     return DisplayRepresentation(title: "Hush profile", subtitle: parts.isEmpty ? nil : "\(parts.joined(separator: ", "))")
   }
@@ -52,7 +60,7 @@ struct HushFocusFilter: SetFocusFilterIntent {
       defaults.set(try JSONEncoder().encode(snap), forKey: Self.snapshotKey)
     }
     if let anc { Hush.send("anc/\(Int(anc.rounded()))") }
-    if let selfVoice { Hush.send("selfvoice/\(selfVoice.rawValue)") }
+    if let selfVoice, selfVoice != .keep { Hush.send("selfvoice/\(selfVoice.rawValue)") }
     if eq == .flat { Hush.send("eq/flat") }
     return .result()
   }
