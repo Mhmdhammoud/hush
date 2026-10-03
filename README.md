@@ -179,6 +179,11 @@ npm run typecheck
 
 `assets/brand/tools/build.py` regenerates the icon, menu-bar glyphs and wordmark.
 
+When building Release from the command line with your own signing identity, check the result with
+`codesign -v Hush.app` before installing. On incremental builds the "Bundle React Native code" phase can
+rewrite `main.jsbundle` after Xcode signs the app, which leaves a broken seal; re-sign with
+`codesign --force --sign "<identity>" --preserve-metadata=entitlements,requirements,flags,runtime Hush.app`.
+
 ## License
 
 MIT. See [LICENSE](LICENSE).
